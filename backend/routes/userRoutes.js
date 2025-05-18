@@ -43,4 +43,27 @@ router.post('/', async (req, res) => {
   }
 });
 
+// PUT update workout by ID
+router.put('/:id', async (req, res) => {
+  try {
+    const { type, duration, caloriesBurned, date } = req.body;
+
+    const updatedWorkout = await Workout.findByIdAndUpdate(
+      req.params.id,
+      { type, duration, caloriesBurned, date },
+      { new: true }
+    );
+
+    if (!updatedWorkout) {
+      return res.status(404).json({ error: 'Workout not found' });
+    }
+
+    res.json({ message: 'Workout updated', workout: updatedWorkout });
+  } catch (err) {
+    console.error('Error updating workout:', err);
+    res.status(500).json({ error: 'Server error' });
+  }
+});
+
+
 module.exports = router;
