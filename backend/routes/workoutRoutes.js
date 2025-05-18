@@ -38,27 +38,28 @@ router.post('/', async (req, res) => {
   }
 });
 
-// PUT update user by ID
+
+
+// PUT update workout by ID
 router.put('/:id', async (req, res) => {
   try {
-    const { name, email, password } = req.body;
+    const { type, duration, caloriesBurned, date } = req.body;
 
-    const updatedUser = await User.findByIdAndUpdate(
+    const updatedWorkout = await Workout.findByIdAndUpdate(
       req.params.id,
-      { name, email, password },
+      { type, duration, caloriesBurned, date },
       { new: true }
     );
 
-    if (!updatedUser) {
-      return res.status(404).json({ error: 'User not found' });
+    if (!updatedWorkout) {
+      return res.status(404).json({ error: 'Workout not found' });
     }
 
-    res.json({ message: 'User updated', user: updatedUser });
+    res.json({ message: 'Workout updated', workout: updatedWorkout });
   } catch (err) {
-    console.error('Error updating user:', err);
+    console.error('Error updating workout:', err);
     res.status(500).json({ error: 'Server error' });
   }
 });
-
 
 module.exports = router;
