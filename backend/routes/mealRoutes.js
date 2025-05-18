@@ -38,4 +38,27 @@ router.post('/', async (req, res) => {
   }
 });
 
+// PUT update meal by ID
+router.put('/:id', async (req, res) => {
+  try {
+    const { name, calories, protein, fat, fiber } = req.body;
+
+    const updatedMeal = await Meal.findByIdAndUpdate(
+      req.params.id,
+      { name, calories, protein, fat, fiber },
+      { new: true }
+    );
+
+    if (!updatedMeal) {
+      return res.status(404).json({ error: 'Meal not found' });
+    }
+
+    res.json({ message: 'Meal updated', meal: updatedMeal });
+  } catch (err) {
+    console.error('Error updating meal:', err);
+    res.status(500).json({ error: 'Server error' });
+  }
+});
+
+
 module.exports = router;
