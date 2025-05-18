@@ -3,22 +3,24 @@ const mongoose = require('mongoose');
 const cors = require('cors');
 require('dotenv').config();
 
-// Routes
+// Import route modules
 const userRoutes = require('./routes/userRoutes');
 const mealRoutes = require('./routes/mealRoutes');
 const workoutRoutes = require('./routes/workoutRoutes');
 const hydrationRoutes = require('./routes/hydrationRoutes');
 
 const app = express();
+
+// Middleware
 app.use(cors());
 app.use(express.json());
 
+// Connect to MongoDB
 mongoose.connect(process.env.MONGO_URI)
-
   .then(() => console.log('MongoDB connected'))
   .catch(err => console.log('MongoDB error:', err));
 
-// API Endpoints
+// Routes
 app.use('/api/users', userRoutes);
 app.use('/api/meals', mealRoutes);
 app.use('/api/workouts', workoutRoutes);
