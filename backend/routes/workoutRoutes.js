@@ -12,4 +12,30 @@ router.get('/', async (req, res) => {
   }
 });
 
+// POST add new workout
+router.post('/', async (req, res) => {
+  try {
+    const { userId, type, duration, caloriesBurned, date } = req.body;
+
+    if (!type || !duration) {
+      return res.status(400).json({ error: 'Type and duration are required.' });
+    }
+
+    const newWorkout = new Workout({
+      userId,
+      type,
+      duration,
+      caloriesBurned: caloriesBurned || 0,
+      date: date || Date.now(),
+    });
+
+    const savedWorkout = await newWorkout.save();
+
+    res.status(201).json({ message: 'Workout added successfully', workout: savedWorkout });
+  } catch (err) {
+    console.error('Error saving workout:', err);
+    res.status(500).json({ error: 'Server error' });
+  }
+});
+
 module.exports = router;
