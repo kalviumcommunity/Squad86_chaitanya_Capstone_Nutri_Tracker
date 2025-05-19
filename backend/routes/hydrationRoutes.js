@@ -12,7 +12,7 @@ router.get('/', async (req, res) => {
   }
 });
 
-// POST add new hydration log
+// POST add new hydration 
 router.post('/', async (req, res) => {
   try {
     const { userId, amount, date } = req.body;
