@@ -1,9 +1,10 @@
+// models/User.js
 const mongoose = require('mongoose');
 
 const UserSchema = new mongoose.Schema({
   username: { type: String, required: true, unique: true },
   email: { type: String, required: true, unique: true },
-  passwordHash: { type: String, required: true },
+  passwordHash: { type: String, required: true }, // Store hashed password
   age: Number,
   gender: { type: String, enum: ['male', 'female', 'other'] },
   height: Number, // cm
@@ -12,7 +13,7 @@ const UserSchema = new mongoose.Schema({
     type: String, 
     enum: ['sedentary', 'light', 'moderate', 'active', 'very active'] 
   },
-  createdAt: { type: Date, default: Date.now },
+  createdAt: { type: Date, default: Date.now }
 });
 
 module.exports = mongoose.model('User', UserSchema);

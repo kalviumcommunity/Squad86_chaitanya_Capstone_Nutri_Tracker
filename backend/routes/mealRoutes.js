@@ -15,37 +15,65 @@ router.get('/', async (req, res) => {
 // POST add a new meal
 router.post('/', async (req, res) => {
   try {
-    const { name, calories, protein, fat, fiber } = req.body;
+    const { userId, date, mealType, foods } = req.body;
 
-    if (!name || !calories) {
-      return res.status(400).json({ error: 'Name and calories are required.' });
+    if (!userId || !date || !mealType || !foods || !Array.isArray(foods)) {
+      return res.status(400).json({ error: 'Missing required fields.' });
     }
 
+    // Calculate totals
+    const totalCalories = foods.reduce((sum, item) => sum + item.calories, 0);
+    const totalFats = foods.reduce((sum, item) => sum + item.fats, 0);
+    const totalProteins = foods.reduce((sum, item) => sum + item.proteins, 0);
+    const totalFiber = foods.reduce((sum, item) => sum + item.fiber, 0);
+
     const newMeal = new Meal({
-      name,
-      calories,
-      protein: protein || 0,
-      fat: fat || 0,
-      fiber: fiber || 0,
+      userId,
+      date,
+      mealType,
+      foods,
+      totalCalories,
+      totalFats,
+      totalProteins,
+      totalFiber
     });
 
     const savedMeal = await newMeal.save();
-
     res.status(201).json({ message: 'Meal added successfully', meal: savedMeal });
+
   } catch (err) {
     console.error('Error saving meal:', err);
     res.status(500).json({ error: 'Server error' });
   }
 });
 
-// PUT update meal by ID
+// PUT update a meal
 router.put('/:id', async (req, res) => {
   try {
-    const { name, calories, protein, fat, fiber } = req.body;
+    const { userId, date, mealType, foods } = req.body;
+
+    if (!userId || !date || !mealType || !foods || !Array.isArray(foods)) {
+      return res.status(400).json({ error: 'Missing required fields.' });
+    }
+
+    // Recalculate totals
+    const totalCalories = foods.reduce((sum, item) => sum + item.calories, 0);
+    const totalFats = foods.reduce((sum, item) => sum + item.fats, 0);
+    const totalProteins = foods.reduce((sum, item) => sum + item.proteins, 0);
+    const totalFiber = foods.reduce((sum, item) => sum + item.fiber, 0);
 
     const updatedMeal = await Meal.findByIdAndUpdate(
       req.params.id,
-      { name, calories, protein, fat, fiber },
+      {
+        userId,
+        date,
+        mealType,
+        foods,
+        totalCalories,
+        totalFats,
+        totalProteins,
+        totalFiber
+      },
       { new: true }
     );
 
@@ -54,11 +82,11 @@ router.put('/:id', async (req, res) => {
     }
 
     res.json({ message: 'Meal updated', meal: updatedMeal });
+
   } catch (err) {
     console.error('Error updating meal:', err);
     res.status(500).json({ error: 'Server error' });
   }
 });
-
 
 module.exports = router;

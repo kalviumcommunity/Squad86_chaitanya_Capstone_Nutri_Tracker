@@ -12,19 +12,19 @@ router.get('/', async (req, res) => {
   }
 });
 
-// POST add new hydration 
+// POST new hydration log
 router.post('/', async (req, res) => {
   try {
-    const { userId, amount, date } = req.body;
+    const { userId, amountMl, date } = req.body;
 
-    if (!amount) {
-      return res.status(400).json({ error: 'Amount of water is required' });
+    if (!userId || !amountMl) {
+      return res.status(400).json({ error: 'userId and amountMl are required' });
     }
 
     const newLog = new Hydration({
       userId,
-      amount,
-      date: date || Date.now(),
+      amountMl,
+      date: date || new Date()
     });
 
     const savedLog = await newLog.save();
@@ -38,11 +38,11 @@ router.post('/', async (req, res) => {
 // PUT update hydration log by ID
 router.put('/:id', async (req, res) => {
   try {
-    const { amount, date } = req.body;
+    const { amountMl, date } = req.body;
 
     const updatedLog = await Hydration.findByIdAndUpdate(
       req.params.id,
-      { amount, date },
+      { amountMl, date },
       { new: true }
     );
 
