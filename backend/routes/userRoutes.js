@@ -1,3 +1,4 @@
+// routes/userRoutes.js
 const express = require('express');
 const User = require('../models/User');
 const router = express.Router();
@@ -15,27 +16,29 @@ router.get('/', async (req, res) => {
 // POST add a new user
 router.post('/', async (req, res) => {
   try {
-    const { name, email, password } = req.body;
+    const { username, email, passwordHash, age, gender, height, weight, activityLevel } = req.body;
 
-    // Basic validation
-    if (!name || !email || !password) {
-      return res.status(400).json({ error: 'Name, email and password are required.' });
+    if (!username || !email || !passwordHash) {
+      return res.status(400).json({ error: 'Username, email, and passwordHash are required.' });
     }
 
-    // Check if user already exists (optional)
     const existingUser = await User.findOne({ email });
     if (existingUser) {
-      return res.status(400).json({ error: 'User with this email already exists.' });
+      return res.status(400).json({ error: 'Email already registered.' });
     }
 
     const newUser = new User({
-      name,
+      username,
       email,
-      password, // In real apps, hash the password before saving!
+      passwordHash,
+      age,
+      gender,
+      height,
+      weight,
+      activityLevel
     });
 
     const savedUser = await newUser.save();
-
     res.status(201).json({ message: 'User created successfully', user: savedUser });
   } catch (err) {
     console.error('Error saving user:', err);
@@ -46,13 +49,9 @@ router.post('/', async (req, res) => {
 // PUT update user by ID
 router.put('/:id', async (req, res) => {
   try {
-    const { name, email, password } = req.body;
+    const updates = req.body;
 
-    const updatedUser = await User.findByIdAndUpdate(
-      req.params.id,
-      { name, email, password },
-      { new: true }
-    );
+    const updatedUser = await User.findByIdAndUpdate(req.params.id, updates, { new: true });
 
     if (!updatedUser) {
       return res.status(404).json({ error: 'User not found' });
@@ -64,6 +63,5 @@ router.put('/:id', async (req, res) => {
     res.status(500).json({ error: 'Server error' });
   }
 });
-
 
 module.exports = router;

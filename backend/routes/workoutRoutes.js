@@ -1,3 +1,4 @@
+// routes/workoutRoutes.js
 const express = require('express');
 const Workout = require('../models/Workout');
 const router = express.Router();
@@ -15,22 +16,21 @@ router.get('/', async (req, res) => {
 // POST add new workout
 router.post('/', async (req, res) => {
   try {
-    const { userId, type, duration, caloriesBurned, date } = req.body;
+    const { userId, workoutType, durationMinutes, caloriesBurned, date } = req.body;
 
-    if (!type || !duration) {
-      return res.status(400).json({ error: 'Type and duration are required.' });
+    if (!workoutType || !durationMinutes) {
+      return res.status(400).json({ error: 'Workout type and duration are required.' });
     }
 
     const newWorkout = new Workout({
       userId,
-      type,
-      duration,
+      workoutType,
+      durationMinutes,
       caloriesBurned: caloriesBurned || 0,
       date: date || Date.now(),
     });
 
     const savedWorkout = await newWorkout.save();
-
     res.status(201).json({ message: 'Workout added successfully', workout: savedWorkout });
   } catch (err) {
     console.error('Error saving workout:', err);
@@ -38,16 +38,14 @@ router.post('/', async (req, res) => {
   }
 });
 
-
-
 // PUT update workout by ID
 router.put('/:id', async (req, res) => {
   try {
-    const { type, duration, caloriesBurned, date } = req.body;
+    const { workoutType, durationMinutes, caloriesBurned, date } = req.body;
 
     const updatedWorkout = await Workout.findByIdAndUpdate(
       req.params.id,
-      { type, duration, caloriesBurned, date },
+      { workoutType, durationMinutes, caloriesBurned, date },
       { new: true }
     );
 
