@@ -2,10 +2,10 @@ const express = require('express');
 const Meal = require('../models/Meal');
 const router = express.Router();
 
-// GET all meals
+// GET all meals with user info populated
 router.get('/', async (req, res) => {
   try {
-    const meals = await Meal.find();
+    const meals = await Meal.find().populate('userId', 'username email');
     res.json(meals);
   } catch (err) {
     res.status(500).json({ error: 'Server error' });
@@ -21,7 +21,6 @@ router.post('/', async (req, res) => {
       return res.status(400).json({ error: 'Missing required fields.' });
     }
 
-    // Calculate totals
     const totalCalories = foods.reduce((sum, item) => sum + item.calories, 0);
     const totalFats = foods.reduce((sum, item) => sum + item.fats, 0);
     const totalProteins = foods.reduce((sum, item) => sum + item.proteins, 0);
@@ -56,7 +55,6 @@ router.put('/:id', async (req, res) => {
       return res.status(400).json({ error: 'Missing required fields.' });
     }
 
-    // Recalculate totals
     const totalCalories = foods.reduce((sum, item) => sum + item.calories, 0);
     const totalFats = foods.reduce((sum, item) => sum + item.fats, 0);
     const totalProteins = foods.reduce((sum, item) => sum + item.proteins, 0);
